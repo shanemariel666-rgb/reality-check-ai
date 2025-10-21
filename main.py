@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
 import requests
 
@@ -9,7 +9,8 @@ REPLICATE_API_KEY = os.environ.get("REPLICATE_API_KEY")
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"message": "Reality Check AI is live!"})
+    # Render your web interface
+    return render_template("index.html")
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
@@ -17,7 +18,6 @@ def analyze():
     text = request.form.get("text")
 
     if text:
-        # Text authenticity analysis via Hugging Face
         headers = {"Authorization": f"Bearer {HUGGINGFACE_API_KEY}"}
         data = {"inputs": text}
         response = requests.post(
@@ -27,9 +27,7 @@ def analyze():
         return jsonify(response.json())
 
     elif file:
-        # Image authenticity detection via Replicate
         headers = {"Authorization": f"Token {REPLICATE_API_KEY}"}
-        files = {"file": file.stream}
         response = requests.post(
             "https://api.replicate.com/v1/predictions",
             headers=headers,
