@@ -6,61 +6,57 @@
   <title>Reality Check AI</title>
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="icon" href="/static/logo.png" type="image/png" />
-</head>
-<body>
-  <div class="container">
-    <img src="/static/logo.png" alt="Reality Check AI Logo" class="logo" />
-    <h1>Reality Check AI</h1>
-    <p class="subtitle">Fact Verification for the New Era</p>
+  <style>
+    /* --- GLOBAL --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <form id="analyzeForm" enctype="multipart/form-data">
-      <input type="file" id="file" name="file" accept="image/*" />
-      <textarea id="text" name="text" placeholder="Paste text or claim here..."></textarea>
-      <button id="analyzeButton" type="submit">Analyze</button>
-    </form>
+    body {
+      height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #00111a 0%, #000000 100%);
+      background-image: url("/static/background.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+    }
 
-    <div id="loading" class="loading" style="display: none;">
-      🔍 Analyzing your input, please wait...
-    </div>
+    /* --- MAIN CONTAINER --- */
+    .container {
+      background: rgba(0, 0, 20, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
 
-    <div id="result" class="result-box"></div>
-  </div>
+    /* --- LOGO --- */
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 10px cyan);
+    }
 
-  <script>
-    const form = document.getElementById("analyzeForm");
-    const resultBox = document.getElementById("result");
-    const loading = document.getElementById("loading");
+    h1 {
+      font-size: 1.8rem;
+      color: cyan;
+      margin-bottom: 5px;
+    }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      resultBox.innerHTML = "";
-      loading.style.display = "block";
-
-      const formData = new FormData(form);
-
-      try {
-        const response = await fetch("/api/analyze", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error("Server error. Please try again.");
-        }
-
-        const data = await response.json();
-        loading.style.display = "none";
-
-        if (data.result) {
-          resultBox.innerHTML = `<h3>✅ Analysis Result:</h3><p>${data.result}</p>`;
-        } else {
-          resultBox.innerHTML = `<h3>⚠️ No clear result received.</h3>`;
-        }
-      } catch (err) {
-        loading.style.display = "none";
-        resultBox.innerHTML = `<p class="error">❌ ${err.message}</p>`;
-      }
-    });
-  </script>
-</body>
-</html>
+    .subtitle {
+      font-size: 1rem;
+      color: #aaa;
+      margin-bottom
