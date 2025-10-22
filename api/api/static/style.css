@@ -1,34 +1,89 @@
+/* --- Reality Check AI | Polished Professional Style --- */
+
 body {
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-  color: white;
-  font-family: 'Inter', sans-serif;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(to bottom right, #0a0f1c, #1a2743);
+  background-image: url("background.png");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
   text-align: center;
-  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 35, 0.8);
   border-radius: 20px;
-  padding: 2rem;
-  margin: auto;
-  max-width: 500px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  padding: 40px 30px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 0 40px rgba(0, 255, 200, 0.3);
+  backdrop-filter: blur(8px);
 }
 
-button {
-  background: #00c6ff;
-  border: none;
-  padding: 10px 20px;
-  color: white;
-  font-weight: bold;
-  border-radius: 10px;
-  cursor: pointer;
+img {
+  width: 120px;
+  margin-bottom: 15px;
 }
 
-button:hover {
-  background: #0072ff;
+h1 {
+  margin: 10px 0;
+  font-size: 26px;
+  color: #00ffc3;
+}
+
+p {
+  color: #cfd8dc;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 input[type="file"] {
-  margin: 1rem 0;
+  border: 1px solid #00ffc3;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #0f1626;
+  color: #fff;
+}
+
+button {
+  background: #00ffc3;
+  color: #0a0f1c;
+  border: none;
+  padding: 12px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #03e6b5;
+  transform: translateY(-2px);
+}
+
+.result-box {
+  margin-top: 25px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 13px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 22px; }
+  .container { padding: 25px 20px; }
+  button { font-size: 14px; }
 }
