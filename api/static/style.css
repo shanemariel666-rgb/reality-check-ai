@@ -1,71 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: white;
-  margin: 0;
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+  color: #fff;
   height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Animated star field */
+.stars {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+  animation: moveStars 60s linear infinite;
+  z-index: 0;
+  opacity: 0.3;
+}
+
+@keyframes moveStars {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-100px, 100px); }
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
   padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-  width: 90%;
-  max-width: 400px;
   text-align: center;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
   backdrop-filter: blur(10px);
+  animation: fadeIn 1.5s ease;
 }
 
 .logo {
   width: 100px;
   margin-bottom: 20px;
+  filter: drop-shadow(0 0 10px cyan);
+  transition: transform 0.5s ease;
+}
+
+.logo:hover {
+  transform: rotate(10deg) scale(1.1);
 }
 
 h1 {
+  font-weight: 700;
   font-size: 1.8rem;
+  color: #00e6ff;
   margin-bottom: 10px;
 }
 
-p {
-  color: #ddd;
-  margin-bottom: 20px;
+.subtitle {
+  color: #ccc;
+  margin-bottom: 25px;
+  font-size: 0.9rem;
 }
 
 input, textarea {
   width: 100%;
-  padding: 10px;
   margin: 10px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.9rem;
+  resize: none;
+}
+
+input[type="file"] {
   border: none;
-  border-radius: 8px;
+  background: none;
 }
 
 button {
   width: 100%;
-  padding: 10px;
-  background-color: #00bcd4;
+  padding: 12px;
   border: none;
-  border-radius: 8px;
-  color: white;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #00e6ff, #0077ff);
+  color: #fff;
+  font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px #00e6ff88;
 }
 
 button:hover {
-  background-color: #008c9e;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #00e6ff;
 }
 
 pre {
   text-align: left;
-  font-size: 0.9rem;
-  background: rgba(0,0,0,0.3);
-  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
-  margin-top: 15px;
-  max-height: 200px;
+  padding: 10px;
+  font-size: 0.8rem;
+  margin-top: 20px;
   overflow-y: auto;
+  max-height: 200px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
