@@ -1,39 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reality Check AI</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 40px; background: #f5f5f5; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: inline-block; }
-    input, textarea, button { margin: 10px; width: 90%; padding: 10px; }
-    button { background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
-    button:hover { background: #0056b3; }
-    #result { margin-top: 20px; white-space: pre-wrap; }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="card">
-    <h2>Reality Check AI</h2>
-    <p>Upload an image or enter text to verify authenticity.</p>
+  <div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Reality Check AI" class="logo">
+    <h1>Reality Check AI</h1>
+    <p>Upload an image or video to detect authenticity.</p>
 
-    <form id="analyzeForm">
-      <input type="file" id="fileInput" name="file" accept="image/*,video/*">
-      <textarea id="textInput" name="text" placeholder="Paste text or claim here..."></textarea>
+    <form id="uploadForm">
+      <input type="file" id="fileInput" name="image" accept="image/*" required>
       <button type="submit">Analyze</button>
     </form>
 
+    <div id="loading" style="display: none;">Analyzing...</div>
     <div id="result"></div>
   </div>
 
   <script>
-    document.getElementById("analyzeForm").addEventListener("submit", async (e) => {
+    const form = document.getElementById('uploadForm');
+    const resultDiv = document.getElementById('result');
+    const loadingDiv = document.getElementById('loading');
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const response = await fetch("/analyze", { method: "POST", body: formData });
-      const result = await response.json();
-      document.getElementById("result").innerText = JSON.stringify(result, null, 2);
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert('Please select an image first');
+        return;
+      }
+
+      loadingDiv.style.display = 'block';
+      resultDiv.innerHTML = '';
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/analyze', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      loadingDiv.style.display = 'none';
+
+      if (data.error) {
+        resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+      } else {
+        resultDiv.innerHTML = `
+          <div class="card">
+            <h3>Result</h3>
+            <p><strong>Prediction:</strong> ${data.label}</p>
+            <p><strong>Confidence:</strong> ${data.confidence}%</p>
+          </div>`;
+      }
     });
   </script>
 </body>
