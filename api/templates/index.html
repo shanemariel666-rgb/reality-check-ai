@@ -1,1 +1,60 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reality Check AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
+</head>
+<body>
+  <div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Reality Check Logo" width="120" />
+    <h1>Reality Check AI</h1>
+    <p>Upload an image or video frame to verify authenticity using advanced AI detection.</p>
+
+    <form id="uploadForm">
+      <input type="file" id="fileInput" name="file" accept="image/*" required />
+      <button type="submit">Analyze</button>
+    </form>
+
+    <div id="result" class="result-box"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) {
+        alert('Please select a file first.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      resultDiv.innerHTML = 'Analyzing... please wait ⏳';
+
+      try {
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } else {
+          resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error || 'Unknown error'}</p>`;
+        }
+      } catch (err) {
+        resultDiv.innerHTML = `<p style="color: red;">Server error: ${err.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
