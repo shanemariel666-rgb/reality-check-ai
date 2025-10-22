@@ -16,11 +16,11 @@ def analyze():
         image_file = request.files.get('image')
 
         if image_file:
-            # Read image in memory, no saving to disk
+            # Read image in memory (no saving to disk)
             image_bytes = image_file.read()
             image = Image.open(io.BytesIO(image_bytes))
 
-            # Example: Convert to base64 to process/display
+            # Convert image to base64 for preview or analysis
             buffered = io.BytesIO()
             image.save(buffered, format="PNG")
             image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
