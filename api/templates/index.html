@@ -4,118 +4,63 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reality Check AI</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="icon" href="/static/logo.png" type="image/png" />
 </head>
 <body>
-  <!-- Particle background canvas -->
-  <canvas id="bgCanvas"></canvas>
-
   <div class="container">
-    <div class="card">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo" />
-      <h1 class="title">Reality Check AI</h1>
-      <p class="subtitle">Fact Verification for the New Era</p>
+    <img src="/static/logo.png" alt="Reality Check AI Logo" class="logo" />
+    <h1>Reality Check AI</h1>
+    <p class="subtitle">Fact Verification for the New Era</p>
 
-      <form id="analyzeForm">
-        <input type="file" name="image" id="image" accept="image/*" />
-        <textarea name="text" placeholder="Paste text or claim here..."></textarea>
-        <button type="submit" id="analyzeButton">Analyze</button>
-      </form>
+    <form id="analyzeForm" enctype="multipart/form-data">
+      <input type="file" id="file" name="file" accept="image/*" />
+      <textarea id="text" name="text" placeholder="Paste text or claim here..."></textarea>
+      <button id="analyzeButton" type="submit">Analyze</button>
+    </form>
 
-      <div id="loading">
-        <div class="scanner">
-          <div class="beam"></div>
-        </div>
-        <p>Analyzing...</p>
-      </div>
-
-      <div id="result"></div>
+    <div id="loading" class="loading" style="display: none;">
+      🔍 Analyzing your input, please wait...
     </div>
+
+    <div id="result" class="result-box"></div>
   </div>
 
   <script>
-    // --- AI Analyzer ---
     const form = document.getElementById("analyzeForm");
-    const loading = document.getElementById("loading");
     const resultBox = document.getElementById("result");
+    const loading = document.getElementById("loading");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      loading.style.display = "flex";
       resultBox.innerHTML = "";
+      loading.style.display = "block";
 
       const formData = new FormData(form);
-      const response = await fetch("/api/analyze", { method: "POST", body: formData });
-      const data = await response.json();
 
-      loading.style.display = "none";
-      resultBox.innerHTML = data.error
-        ? `<p class='error'>❌ ${data.error}</p>`
-        : `<p class='success'>${data.result}</p>`;
-    });
-
-    // --- Background Particle Animation ---
-    const canvas = document.getElementById("bgCanvas");
-    const ctx = canvas.getContext("2d");
-    let particlesArray = [];
-    const numParticles = 80;
-
-    function initParticles() {
-      particlesArray = [];
-      for (let i = 0; i < numParticles; i++) {
-        particlesArray.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 2 + 1,
-          speedX: (Math.random() - 0.5) * 0.8,
-          speedY: (Math.random() - 0.5) * 0.8
+      try {
+        const response = await fetch("/api/analyze", {
+          method: "POST",
+          body: formData,
         });
-      }
-    }
 
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(0, 224, 255, 0.5)";
-      particlesArray.forEach(p => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      connectParticles();
-      requestAnimationFrame(animateParticles);
-    }
-
-    function connectParticles() {
-      for (let a = 0; a < particlesArray.length; a++) {
-        for (let b = a; b < particlesArray.length; b++) {
-          const dx = particlesArray[a].x - particlesArray[b].x;
-          const dy = particlesArray[a].y - particlesArray[b].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.strokeStyle = "rgba(0, 224, 255, 0.05)";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-            ctx.stroke();
-          }
+        if (!response.ok) {
+          throw new Error("Server error. Please try again.");
         }
+
+        const data = await response.json();
+        loading.style.display = "none";
+
+        if (data.result) {
+          resultBox.innerHTML = `<h3>✅ Analysis Result:</h3><p>${data.result}</p>`;
+        } else {
+          resultBox.innerHTML = `<h3>⚠️ No clear result received.</h3>`;
+        }
+      } catch (err) {
+        loading.style.display = "none";
+        resultBox.innerHTML = `<p class="error">❌ ${err.message}</p>`;
       }
-    }
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    }
-
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-    animateParticles();
+    });
   </script>
 </body>
 </html>
