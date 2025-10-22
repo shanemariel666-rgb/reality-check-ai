@@ -1,39 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reality Check AI</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-  <div class="stars"></div>
   <div class="container">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
-    <h1>Reality Check AI</h1>
-    <p class="subtitle">Fact Verification for the New Era</p>
+    <div class="card">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo" />
+      <h1 class="title">Reality Check AI</h1>
+      <p class="subtitle">Fact Verification for the New Era</p>
 
-    <form id="uploadForm" enctype="multipart/form-data">
-      <input type="file" name="image" accept="image/*" id="fileInput">
-      <textarea name="text" placeholder="Paste text or claim here..."></textarea>
-      <button type="submit">Analyze</button>
-    </form>
+      <form id="analyzeForm">
+        <input type="file" name="image" id="image" accept="image/*" />
+        <textarea name="text" placeholder="Paste text or claim here..."></textarea>
+        <button type="submit" id="analyzeButton">Analyze</button>
+      </form>
 
-    <pre id="result"></pre>
+      <div id="loading">
+        <div class="scanner">
+          <div class="beam"></div>
+        </div>
+        <p>Analyzing...</p>
+      </div>
+
+      <div id="result"></div>
+    </div>
   </div>
 
   <script>
-    const form = document.getElementById('uploadForm');
-    const result = document.getElementById('result');
+    const form = document.getElementById("analyzeForm");
+    const loading = document.getElementById("loading");
+    const resultBox = document.getElementById("result");
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      result.textContent = "Analyzing...";
-      const data = new FormData(form);
-      const res = await fetch('/analyze', { method: 'POST', body: data });
-      const json = await res.json();
-      result.textContent = JSON.stringify(json, null, 2);
+      loading.style.display = "flex";
+      resultBox.innerHTML = "";
+
+      const formData = new FormData(form);
+      const response = await fetch("/api/analyze", { method: "POST", body: formData });
+      const data = await response.json();
+
+      loading.style.display = "none";
+      resultBox.innerHTML = data.error
+        ? `<p class='error'>❌ ${data.error}</p>`
+        : `<p class='success'>${data.result}</p>`;
     });
   </script>
 </body>
