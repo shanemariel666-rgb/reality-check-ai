@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
+  <!-- Particle background canvas -->
+  <canvas id="bgCanvas"></canvas>
+
   <div class="container">
     <div class="card">
       <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo" />
@@ -31,6 +34,7 @@
   </div>
 
   <script>
+    // --- AI Analyzer ---
     const form = document.getElementById("analyzeForm");
     const loading = document.getElementById("loading");
     const resultBox = document.getElementById("result");
@@ -49,6 +53,69 @@
         ? `<p class='error'>❌ ${data.error}</p>`
         : `<p class='success'>${data.result}</p>`;
     });
+
+    // --- Background Particle Animation ---
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    let particlesArray = [];
+    const numParticles = 80;
+
+    function initParticles() {
+      particlesArray = [];
+      for (let i = 0; i < numParticles; i++) {
+        particlesArray.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2 + 1,
+          speedX: (Math.random() - 0.5) * 0.8,
+          speedY: (Math.random() - 0.5) * 0.8
+        });
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(0, 224, 255, 0.5)";
+      particlesArray.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      connectParticles();
+      requestAnimationFrame(animateParticles);
+    }
+
+    function connectParticles() {
+      for (let a = 0; a < particlesArray.length; a++) {
+        for (let b = a; b < particlesArray.length; b++) {
+          const dx = particlesArray[a].x - particlesArray[b].x;
+          const dy = particlesArray[a].y - particlesArray[b].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.strokeStyle = "rgba(0, 224, 255, 0.05)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    animateParticles();
   </script>
 </body>
 </html>
