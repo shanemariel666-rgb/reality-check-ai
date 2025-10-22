@@ -1,12 +1,15 @@
-from flask import Flask, render_template, request, jsonify
-import requests
-import os
+from flask import Flask, render_template, request, jsonify, send_from_directory
+import requests, os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", template_folder="templates")
 
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory(app.static_folder, filename)
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
