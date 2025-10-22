@@ -1,30 +1,142 @@
-# Reality Check AI — Professional PWA
+📘 Reality Check AI
 
-## What this contains
-- Flask API (api/main.py) that accepts file or text and uses Replicate + Hugging Face.
-- Frontend (templates/index.html) and styling (static/style.css).
-- Static assets folder (static/logo.png, background optional).
-- Vercel configuration (vercel.json).
+AI-powered media verification for journalists and digital truth seekers.
 
-## Required environment variables (set on your host)
-- REPLICATE_API_TOKEN       (your replicate.com token)
-- REPLICATE_IMAGE_MODEL     (Replicate model *version id* for images)
-- REPLICATE_VIDEO_MODEL     (Replicate model *version id* for videos) — optional
-- HUGGINGFACE_API_KEY       (your Hugging Face token)
-- HF_TEXT_MODEL            (optional; default: openai-community/roberta-base-openai-detector)
 
-## Deploy (Vercel)
-1. Push this repo to GitHub.
-2. Go to https://vercel.com/new and import the repository.
-3. In Vercel project Settings → Environment Variables, add the keys above.
-4. Deploy. Vercel will build and give you the site URL.
+---
 
-## Run locally
-1. cd api
-2. python -m venv venv && source venv/bin/activate
-3. pip install -r requirements.txt
-4. export REPLICATE_API_TOKEN="r8_xxx"
-   export HUGGINGFACE_API_KEY="hf_xxx"
-   export REPLICATE_IMAGE_MODEL="owner/model@sha256..."
-5. python main.py
-6. Open http://127.0.0.1:5000
+🌍 Overview
+
+Reality Check AI helps journalists, researchers, and everyday users detect whether an image or video frame has been AI-generated or human-made.
+Powered by advanced AI models from Hugging Face, this app offers real-time authenticity analysis with a clean, mobile-friendly interface.
+
+Upload. Analyze. Verify — before you amplify.
+
+
+---
+
+🧠 Key Features
+
+🖼️ AI Image Detection: Quickly verify authenticity using the latest detection models.
+
+📱 Mobile & Web Optimized: Works seamlessly across devices.
+
+🔐 Secure & Private: Files are analyzed instantly without being stored.
+
+🧾 Confidence Dashboard: See detection confidence scores in real time.
+
+👥 Press Login (coming soon): Verified journalist accounts for story tracking and submissions.
+
+
+
+---
+
+🧰 Tech Stack
+
+Layer	Tools
+
+Frontend	HTML5, CSS3, Vanilla JS
+Backend	Flask (Python)
+AI API	Hugging Face API (Image authenticity detection)
+Hosting	Vercel
+Storage	Firebase (for future journalist logins)
+
+
+
+---
+
+🚀 Quick Start (Local Setup)
+
+You can also run Reality Check locally on your computer before deploying.
+
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/reality-check-ai.git
+cd reality-check-ai/api
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set your Hugging Face token
+export HUGGINGFACE_TOKEN="your_token_here"
+
+# Run the app
+python main.py
+
+Then open your browser at:
+👉 http://127.0.0.1:5000
+
+
+---
+
+🧩 Project Structure
+
+api/
+ ├── main.py                # Flask backend logic
+ ├── requirements.txt       # Python dependencies
+ ├── templates/
+ │    └── index.html        # Frontend layout
+ └── static/
+      ├── style.css         # App styling
+      ├── logo.png          # Logo image
+      └── background.png    # Background image
+runtime.txt
+vercel.json
+README.md
+
+
+---
+
+🪶 Deployment (Vercel)
+
+1. Push your repository to GitHub.
+
+
+2. Log into Vercel → Import Project → GitHub Repo
+
+
+3. Set your environment variable:
+
+HUGGINGFACE_TOKEN = your_token_here
+
+
+4. Click Deploy.
+
+
+5. Your app will be live in seconds! 🌐
+
+
+
+
+---
+
+🧩 Example Use Cases
+
+Newsrooms: Rapidly vet viral images before publication.
+
+Fact-Checking Teams: Add AI detection as a verification layer.
+
+Educators: Demonstrate media literacy tools.
+
+Developers: Build custom extensions for detection APIs.
+
+
+
+---
+
+🧑‍💻 Developer
+
+Created by: Shane — with assistance from GPT-5.
+Goal: Build open tools for truth and digital integrity.
+
+
+---
+
+📄 License
+
+This project is released under the MIT License, allowing free use and modification with attribution.
+
+
+---
+
+Would you like me to include visual badges and a banner image at the top (so it looks even more like a professional open-source GitHub project)?
+For example: “Built with Flask 🧠 | Powered by Hugging Face 🤖 | Verified for Journalists 📰”.
