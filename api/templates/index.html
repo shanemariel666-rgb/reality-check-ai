@@ -5,58 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reality Check AI</title>
   <link rel="stylesheet" href="/static/style.css" />
-  <link rel="icon" href="/static/logo.png" type="image/png" />
-  <style>
-    /* --- GLOBAL --- */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      height: 100vh;
-      width: 100vw;
-      overflow-x: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle at center, #00111a 0%, #000000 100%);
-      background-image: url("/static/background.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-    }
-
-    /* --- MAIN CONTAINER --- */
-    .container {
-      background: rgba(0, 0, 20, 0.8);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-      padding: 30px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    /* --- LOGO --- */
-    .logo {
-      width: 120px;
-      height: auto;
-      margin-bottom: 15px;
-      filter: drop-shadow(0 0 10px cyan);
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      color: cyan;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      color: #aaa;
-      margin-bottom
+</head>
+<body>
+  <div class="background-overlay"></div>
+  <div class="container">
+    <div class="card">
+      <img src="/static/logo.png" alt="Reality Check AI Logo" class="logo" />
+      <h1>Reality Check AI</h1>
+      <p class="subtitle">Fact Verification for the New Era</p>
+      <form id="analyze-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file" />
+        <textarea
+          id="text-input"
+          name="text"
+          placeholder="Paste text or claim here..."
+        ></textarea>
+        <button type="submit">Analyze</button>
+      </form>
+      <div id="result"></div>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById("analyze-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const res = await fetch("/api/analyze", { method: "POST", body: formData });
+      const data = await res.json();
+      document.getElementById("result").innerText = data.result || data.error;
+    });
+  </script>
+</body>
+</html>
