@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reality Check AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reality Check AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 </head>
 <body>
-    <div class="container">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
-        <h1>Reality Check AI</h1>
-        <p>Upload an image or enter text to verify authenticity.</p>
-        
-        <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" name="image" accept="image/*">
-            <textarea name="text" placeholder="Paste text or claim here..."></textarea>
-            <button type="submit">Analyze</button>
-        </form>
-        
-        <pre id="result"></pre>
-    </div>
+  <div class="stars"></div>
+  <div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+    <h1>Reality Check AI</h1>
+    <p class="subtitle">Fact Verification for the New Era</p>
 
-    <script>
-        const form = document.getElementById('uploadForm');
-        const result = document.getElementById('result');
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" name="image" accept="image/*" id="fileInput">
+      <textarea name="text" placeholder="Paste text or claim here..."></textarea>
+      <button type="submit">Analyze</button>
+    </form>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = new FormData(form);
-            const res = await fetch('/analyze', { method: 'POST', body: data });
-            const json = await res.json();
-            result.textContent = JSON.stringify(json, null, 2);
-        });
-    </script>
+    <pre id="result"></pre>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      result.textContent = "Analyzing...";
+      const data = new FormData(form);
+      const res = await fetch('/analyze', { method: 'POST', body: data });
+      const json = await res.json();
+      result.textContent = JSON.stringify(json, null, 2);
+    });
+  </script>
 </body>
 </html>
