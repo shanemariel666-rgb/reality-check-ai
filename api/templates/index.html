@@ -1,57 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reality Check AI</title>
-  <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reality Check AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 </head>
 <body>
-  <div class="container">
-    <img src="/static/logo.png" alt="Reality Check AI" class="logo">
-    <h1>Reality Check AI</h1>
-    <p class="tagline">Upload an image or video to detect if it’s real or AI-generated.</p>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+        <h1>Reality Check AI</h1>
+        <p>Upload an image or enter text to verify authenticity.</p>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*">
+            <textarea name="text" placeholder="Paste text or claim here..."></textarea>
+            <button type="submit">Analyze</button>
+        </form>
+        
+        <pre id="result"></pre>
+    </div>
 
-    <form id="upload-form" enctype="multipart/form-data">
-      <input type="file" id="file-input" name="image" accept="image/*,video/*" required>
-      <button type="submit">Analyze</button>
-    </form>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const result = document.getElementById('result');
 
-    <div id="result"></div>
-  </div>
-
-  <script>
-    const form = document.getElementById('upload-form');
-    const resultDiv = document.getElementById('result');
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const fileInput = document.getElementById('file-input');
-      if (!fileInput.files.length) {
-        resultDiv.innerHTML = "<p>Please select a file.</p>";
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('image', fileInput.files[0]);
-
-      resultDiv.innerHTML = "<p>Analyzing... please wait.</p>";
-
-      try {
-        const response = await fetch('/api/analyze', {
-          method: 'POST',
-          body: formData
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = new FormData(form);
+            const res = await fetch('/analyze', { method: 'POST', body: data });
+            const json = await res.json();
+            result.textContent = JSON.stringify(json, null, 2);
         });
-        const data = await response.json();
-        if (data.error) {
-          resultDiv.innerHTML = `<p class='error'>Error: ${data.error}</p>`;
-        } else {
-          resultDiv.innerHTML = `<p class='success'>Result: ${JSON.stringify(data)}</p>`;
-        }
-      } catch (err) {
-        resultDiv.innerHTML = `<p class='error'>Server Error: ${err.message}</p>`;
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
