@@ -2,10 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import requests
 import os
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
-
-# Use your Hugging Face token here
-HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN", "YOUR_TOKEN_HERE")
+app = Flask(__name__)
 
 @app.route('/')
 def home():
@@ -13,23 +10,22 @@ def home():
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file uploaded'}), 400
+    image = request.files.get('image')
+    if not image:
+        return jsonify({'error': 'No image uploaded'}), 400
 
-    file = request.files['file']
-    files = {'file': (file.filename, file.stream, file.mimetype)}
+    HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+    if not HUGGINGFACE_TOKEN:
+        return jsonify({'error': 'Missing Hugging Face token'}), 500
 
     headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
-    url = "https://api-inference.huggingface.co/models/umm-maybe/AI-image-detector"  # Reliable model
+    api_url = "https://api-inference.huggingface.co/models/orion-ai/AI-image-detector"
+    response = requests.post(api_url, headers=headers, files={"file": image})
 
-    try:
-        response = requests.post(url, headers=headers, files=files)
-        if response.status_code == 200:
-            return jsonify(response.json())
-        else:
-            return jsonify({'error': f'Hugging Face error {response.status_code}', 'details': response.text}), response.status_code
-    except Exception as e:
-        return jsonify({'error': 'Server error', 'message': str(e)}), 500
+    if response.status_code != 200:
+        return jsonify({'error': 'Failed to analyze image', 'details': response.text}), 500
+
+    return jsonify(response.json())
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
