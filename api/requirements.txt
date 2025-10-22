@@ -1,2 +1,5 @@
-flask
-requests
+Flask==2.2.5
+requests==2.31.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+Pillow==10.2.0
