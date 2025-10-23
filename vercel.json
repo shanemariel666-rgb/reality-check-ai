@@ -1,12 +1,12 @@
 {
-  "builds": [
-    {
-      "src": "api/main.py",
-      "use": "@vercel/python"
+  "version": 2,
+  "functions": {
+    "api/main.py": {
+      "runtime": "python3.10"
     }
-  ],
+  },
   "routes": [
-    { "src": "/api/(.*)", "dest": "api/main.py" },
-    { "src": "/(.*)", "dest": "/api/main.py" }
+    { "src": "/api/analyze", "dest": "api/main.py" },
+    { "src": "/", "dest": "/templates/index.html" }
   ]
 }
