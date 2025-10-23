@@ -1,21 +1,67 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  background: radial-gradient(circle at top, #0b0c10 0%, #000000 100%);
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reality Check AI</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="/static/logo.png" alt="Reality Check Logo" class="logo" />
+      <h1>Reality Check AI</h1>
+      <p>Detect if images or videos are real or AI-generated</p>
+    </header>
 
-.container {
-  max-width: 420px;         /* ensures it never grows too wide */
-  width: 90%;               /* responsive width */
-  margin: 0 auto;           /* centers horizontally */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;        /* full height on any device */
-  box-sizing: border-box;
-  transform: scale(1);
-}
+    <div class="upload-box">
+      <input type="file" id="fileInput" accept="image/*,video/*" />
+      <button id="analyzeBtn">Analyze</button>
+    </div>
+
+    <div id="result" class="result-box"></div>
+  </div>
+
+  <footer>
+    <p>Powered by <strong>Reality Check AI</strong> • Trusted by Journalists</p>
+  </footer>
+
+  <script>
+    document.getElementById("analyzeBtn").addEventListener("click", async () => {
+      const fileInput = document.getElementById("fileInput");
+      const resultBox = document.getElementById("result");
+
+      if (!fileInput.files.length) {
+        resultBox.innerHTML = "<p class='error'>Please select a file first.</p>";
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      resultBox.innerHTML = "<p class='loading'>Analyzing... Please wait</p>";
+
+      try {
+        const response = await fetch("/api/analyze", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          resultBox.innerHTML = `
+            <h3>Analysis Result</h3>
+            <p><strong>Label:</strong> ${data.label}</p>
+            <p><strong>Confidence:</strong> ${data.score}%</p>
+          `;
+        } else {
+          resultBox.innerHTML = `<p class='error'>${data.error || "An error occurred"}</p>`;
+        }
+      } catch (err) {
+        resultBox.innerHTML = `<p class='error'>Server error: ${err.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
