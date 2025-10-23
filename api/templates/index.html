@@ -2,53 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Reality Check AI</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <div class="card">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo" />
+      <img src="logo.png" alt="Reality Check AI Logo" class="logo" />
+
       <h1 class="title">Reality Check AI</h1>
       <p class="subtitle">Fact Verification for the New Era</p>
 
-      <form id="analyzeForm">
-        <input type="file" name="image" id="image" accept="image/*" />
-        <textarea name="text" placeholder="Paste text or claim here..."></textarea>
-        <button type="submit" id="analyzeButton">Analyze</button>
+      <form id="uploadForm">
+        <label for="fileInput" class="file-label">Choose file</label>
+        <input type="file" id="fileInput" accept="image/*" />
       </form>
 
-      <div id="loading">
-        <div class="scanner">
-          <div class="beam"></div>
-        </div>
-        <p>Analyzing...</p>
-      </div>
+      <textarea id="textInput" placeholder="Paste text or claim here..."></textarea>
 
-      <div id="result"></div>
+      <button id="analyzeBtn">Analyze</button>
+
+      <div id="output" class="output-box"></div>
     </div>
   </div>
 
-  <script>
-    const form = document.getElementById("analyzeForm");
-    const loading = document.getElementById("loading");
-    const resultBox = document.getElementById("result");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      loading.style.display = "flex";
-      resultBox.innerHTML = "";
-
-      const formData = new FormData(form);
-      const response = await fetch("/api/analyze", { method: "POST", body: formData });
-      const data = await response.json();
-
-      loading.style.display = "none";
-      resultBox.innerHTML = data.error
-        ? `<p class='error'>❌ ${data.error}</p>`
-        : `<p class='success'>${data.result}</p>`;
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
