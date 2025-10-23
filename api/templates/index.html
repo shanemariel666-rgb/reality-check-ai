@@ -1,48 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reality Check AI</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reality Check AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <div class="app-header">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="Reality Check Logo" class="logo">
-      <h1>Reality Check AI</h1>
-      <p>Analyze photos, videos, or text to verify authenticity</p>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Reality Check Logo" class="logo">
+        <h1>🧠 Reality Check AI</h1>
+        <p class="subtitle">Analyze news, claims, and stories with AI-powered realism insights.</p>
+
+        <textarea id="inputText" placeholder="Enter text, news, or a claim to analyze..."></textarea>
+        <button id="analyzeBtn">Analyze</button>
+
+        <div id="loading" class="hidden">🔍 Analyzing, please wait...</div>
+        <div id="result" class="hidden"></div>
     </div>
 
-    <div class="upload-section">
-      <textarea id="textInput" placeholder="Paste text to analyze..."></textarea>
-      <input type="file" id="fileInput" accept="image/*,video/*" />
-      <button id="analyzeBtn">Analyze</button>
-    </div>
+    <script>
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const inputText = document.getElementById('inputText');
+        const resultDiv = document.getElementById('result');
+        const loadingDiv = document.getElementById('loading');
 
-    <div class="result" id="result"></div>
-  </div>
+        analyzeBtn.addEventListener('click', async () => {
+            const text = inputText.value.trim();
+            if (!text) {
+                resultDiv.textContent = "Please enter text to analyze.";
+                resultDiv.classList.remove('hidden');
+                return;
+            }
 
-  <script>
-    const analyzeBtn = document.getElementById("analyzeBtn");
-    analyzeBtn.addEventListener("click", async () => {
-      const text = document.getElementById("textInput").value;
-      const resultDiv = document.getElementById("result");
-      resultDiv.textContent = "Analyzing...";
-      
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
+            loadingDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
 
-      const data = await response.json();
-      if (data.analysis) {
-        resultDiv.textContent = data.analysis;
-      } else {
-        resultDiv.textContent = "Error: " + (data.error || "Unexpected response");
-      }
-    });
-  </script>
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                const data = await response.json();
+                loadingDiv.classList.add('hidden');
+
+                if (data.error) {
+                    resultDiv.textContent = `⚠️ ${data.error}`;
+                } else {
+                    resultDiv.innerHTML = `<strong>Result:</strong><br>${data.analysis}`;
+                }
+                resultDiv.classList.remove('hidden');
+            } catch (err) {
+                loadingDiv.classList.add('hidden');
+                resultDiv.textContent = "Error: Could not reach the analysis server.";
+                resultDiv.classList.remove('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
