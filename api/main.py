@@ -2,53 +2,41 @@ from flask import Flask, render_template, request, jsonify
 import os
 import requests
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEMPLATE_DIR = os.path.join(BASE_DIR, "../templates")
-STATIC_DIR = os.path.join(BASE_DIR, "../static")
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
-app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-# Environment variables
-HUGGINGFACE_API_TOKEN = os.environ.get("HUGGINGFACE_API_TOKEN")
-REPLICATE_API_TOKEN = os.environ.get("REPLICATE_API_TOKEN")
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/api/analyze", methods=["POST"])
+@app.route('/api/analyze', methods=['POST'])
 def analyze():
-    if "file" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
+    data = request.get_json()
+    text = data.get("text", "")
 
-    file = request.files["file"]
-    if file.filename == "":
-        return jsonify({"error": "Empty filename"}), 400
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
 
-    temp_path = os.path.join(BASE_DIR, "temp_upload")
-    file.save(temp_path)
+    hf_token = os.getenv("HF_API_TOKEN")
+    replicate_token = os.getenv("REPLICATE_API_TOKEN")
 
-    try:
-        headers = {"Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}"}
-        files = {"file": open(temp_path, "rb")}
-        response = requests.post(
-            "https://api-inference.huggingface.co/models/roberta-base-openai-detector",
-            headers=headers,
-            files=files,
-        )
+    if not hf_token:
+        return jsonify({"error": "Missing HF_API_TOKEN"}), 500
 
-        if response.status_code == 200:
-            hf_data = response.json()
-            return jsonify({"source": "huggingface", "result": hf_data})
+    headers = {"Authorization": f"Bearer {hf_token}"}
+    payload = {"inputs": f"Analyze this text for realism: {text}"}
 
-        return jsonify({"error": "AI analysis failed", "status": response.status_code}), 500
+    response = requests.post(
+        "https://api-inference.huggingface.co/models/google/flan-t5-small",
+        headers=headers,
+        json=payload
+    )
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    if response.status_code != 200:
+        return jsonify({"error": "HuggingFace API failed", "details": response.text}), 500
 
-    finally:
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+    result = response.json()
+    output = result[0]["generated_text"] if isinstance(result, list) else str(result)
+    return jsonify({"analysis": output})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
