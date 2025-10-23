@@ -1,65 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reality Check AI</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <div class="container">
-    <header>
-      <img src="/static/logo.png" alt="Reality Check Logo" class="logo" />
+    <div class="app-header">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Reality Check Logo" class="logo">
       <h1>Reality Check AI</h1>
-      <p>Detect if images or videos are real or AI-generated</p>
-    </header>
+      <p>Analyze photos, videos, or text to verify authenticity</p>
+    </div>
 
-    <div class="upload-box">
+    <div class="upload-section">
+      <textarea id="textInput" placeholder="Paste text to analyze..."></textarea>
       <input type="file" id="fileInput" accept="image/*,video/*" />
       <button id="analyzeBtn">Analyze</button>
     </div>
 
-    <div id="result" class="result-box"></div>
+    <div class="result" id="result"></div>
   </div>
 
-  <footer>
-    <p>Powered by <strong>Reality Check AI</strong> • Trusted by Journalists</p>
-  </footer>
-
   <script>
-    document.getElementById("analyzeBtn").addEventListener("click", async () => {
-      const fileInput = document.getElementById("fileInput");
-      const resultBox = document.getElementById("result");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    analyzeBtn.addEventListener("click", async () => {
+      const text = document.getElementById("textInput").value;
+      const resultDiv = document.getElementById("result");
+      resultDiv.textContent = "Analyzing...";
+      
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
 
-      if (!fileInput.files.length) {
-        resultBox.innerHTML = "<p class='error'>Please select a file first.</p>";
-        return;
-      }
-
-      const file = fileInput.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
-
-      resultBox.innerHTML = "<p class='loading'>Analyzing... Please wait</p>";
-
-      try {
-        const response = await fetch("/api/analyze", {
-          method: "POST",
-          body: formData,
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          resultBox.innerHTML = `
-            <h3>Analysis Result</h3>
-            <p><strong>Label:</strong> ${data.label}</p>
-            <p><strong>Confidence:</strong> ${data.score}%</p>
-          `;
-        } else {
-          resultBox.innerHTML = `<p class='error'>${data.error || "An error occurred"}</p>`;
-        }
-      } catch (err) {
-        resultBox.innerHTML = `<p class='error'>Server error: ${err.message}</p>`;
+      const data = await response.json();
+      if (data.analysis) {
+        resultDiv.textContent = data.analysis;
+      } else {
+        resultDiv.textContent = "Error: " + (data.error || "Unexpected response");
       }
     });
   </script>
