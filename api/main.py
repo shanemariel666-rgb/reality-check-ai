@@ -1,41 +1,50 @@
 from flask import Flask, render_template, request, jsonify
-from PIL import Image
-import io
-import base64
+import requests
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
-@app.route('/')
+HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/umm-maybe/AI-image-detector"
+HUGGINGFACE_TOKEN = os.environ.get("HUGGINGFACE_API_TOKEN")
+REPLICATE_TOKEN = os.environ.get("REPLICATE_API_TOKEN")
+
+headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
+
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
-@app.route('/api/analyze', methods=['POST'])
+@app.route("/api/analyze", methods=["POST"])
 def analyze():
+    if "file" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files["file"]
+    file_bytes = file.read()
+
     try:
-        text_input = request.form.get('text', '')
-        image_file = request.files.get('image')
+        # Try Hugging Face API
+        response = requests.post(
+            HUGGINGFACE_API_URL,
+            headers=headers,
+            data=file_bytes,
+        )
 
-        if image_file:
-            # Read image in memory (no saving to disk)
-            image_bytes = image_file.read()
-            image = Image.open(io.BytesIO(image_bytes))
+        if response.status_code == 401:
+            return jsonify({"error": "Unauthorized – check your Hugging Face token"}), 401
+        elif response.status_code != 200:
+            return jsonify({"error": f"Hugging Face API error {response.status_code}"}), 500
 
-            # Convert image to base64 for preview or analysis
-            buffered = io.BytesIO()
-            image.save(buffered, format="PNG")
-            image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
-
-            result = f"✅ Image '{image_file.filename}' processed successfully (in-memory)."
-        elif text_input:
-            result = f"🧠 Text analyzed: \"{text_input[:80]}...\""
-        else:
-            result = "⚠️ Please upload an image or enter text."
+        result = response.json()
+        if isinstance(result, list) and len(result) > 0:
+            label = result[0].get("label", "Unknown")
+            score = result[0].get("score", 0)
+            return jsonify({"label": label, "score": round(score * 100, 2)})
 
         return jsonify({"result": result})
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
