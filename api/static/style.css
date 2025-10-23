@@ -1,113 +1,141 @@
-body {
+/* --- Base Layout Fixes --- */
+html, body {
   margin: 0;
-  height: 100vh;
-  background: radial-gradient(circle at center, #0a0f1a, #000);
-  color: #fff;
-  font-family: "Poppins", sans-serif;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #0b0c10 0%, #000000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Main Container --- */
+.container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: hidden;
 }
 
-.container {
-  text-align: center;
-}
-
+/* --- Card Styling --- */
 .card {
-  background: rgba(20, 20, 30, 0.85);
-  border: 1px solid #00e0ff33;
-  box-shadow: 0 0 40px #00e0ff33;
-  border-radius: 20px;
-  padding: 2rem;
-  width: 90%;
-  max-width: 400px;
+  background: #0e1116;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+  width: 100%;
+  transition: transform 0.2s ease;
 }
 
 .logo {
-  width: 120px;
-  margin-bottom: 10px;
-  filter: drop-shadow(0 0 10px #00e0ff);
+  width: 140px;
+  height: auto;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.6));
 }
 
+/* --- Typography --- */
 .title {
-  font-size: 2rem;
-  color: #00e0ff;
-  text-shadow: 0 0 15px #00e0ff66;
+  font-size: 1.8rem;
+  color: #00ffff;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .subtitle {
   color: #aaa;
-  margin-bottom: 20px;
+  font-size: 1rem;
+  margin-bottom: 16px;
 }
 
-input[type="file"],
+/* --- Inputs --- */
+#fileInput {
+  display: none;
+}
+
+.file-label {
+  background: #222;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
 textarea {
   width: 100%;
-  margin-bottom: 1rem;
-  padding: 10px;
+  min-height: 60px;
   border-radius: 8px;
-  border: none;
-  outline: none;
+  border: 1px solid #333;
+  background: #111;
+  color: #fff;
+  padding: 10px;
+  margin-top: 10px;
+  box-sizing: border-box;
+  resize: none;
 }
 
+/* --- Button --- */
 button {
-  background: linear-gradient(90deg, #00e0ff, #0077ff);
-  border: none;
-  color: white;
-  padding: 12px 25px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #00ffff, #0077ff);
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px #00e0ff99;
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
 }
 
-/* SCANNER ANIMATION */
-#loading {
-  display: none;
-  flex-direction: column;
-  align-items: center;
+/* --- Output Box --- */
+.output-box {
   margin-top: 20px;
-}
-
-.scanner {
-  position: relative;
-  width: 250px;
-  height: 200px;
-  border: 2px solid #00e0ff;
+  padding: 12px;
   border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 20px #00e0ff33;
-}
-
-.beam {
-  position: absolute;
-  width: 100%;
-  height: 10px;
-  background: linear-gradient(90deg, transparent, #00e0ff, transparent);
-  animation: scan 2s linear infinite;
-}
-
-@keyframes scan {
-  0% { top: 0; }
-  100% { top: 190px; }
-}
-
-#result {
-  margin-top: 20px;
-  font-size: 1.1rem;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 15px;
-  border-radius: 10px;
+  background: rgba(0, 255, 128, 0.1);
   color: #00ffcc;
-  box-shadow: 0 0 10px #00e0ff33;
+  font-size: 0.95rem;
+  display: none;
+  text-align: left;
+  word-break: break-word;
 }
 
-.error { color: #ff7070; }
-.success { color: #00ffcc; }
+/* --- Mobile Fix --- */
+@media (max-width: 480px) {
+  .container {
+    transform: scale(0.95);
+    transform-origin: center top;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .logo {
+    width: 120px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+}
