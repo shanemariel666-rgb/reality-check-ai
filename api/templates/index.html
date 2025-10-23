@@ -1,33 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Reality Check AI</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="container">
-    <div class="card">
-      <img src="logo.png" alt="Reality Check AI Logo" class="logo" />
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background: radial-gradient(circle at top, #0b0c10 0%, #000000 100%);
+}
 
-      <h1 class="title">Reality Check AI</h1>
-      <p class="subtitle">Fact Verification for the New Era</p>
-
-      <form id="uploadForm">
-        <label for="fileInput" class="file-label">Choose file</label>
-        <input type="file" id="fileInput" accept="image/*" />
-      </form>
-
-      <textarea id="textInput" placeholder="Paste text or claim here..."></textarea>
-
-      <button id="analyzeBtn">Analyze</button>
-
-      <div id="output" class="output-box"></div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+.container {
+  max-width: 420px;         /* ensures it never grows too wide */
+  width: 90%;               /* responsive width */
+  margin: 0 auto;           /* centers horizontally */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;        /* full height on any device */
+  box-sizing: border-box;
+  transform: scale(1);
+}
